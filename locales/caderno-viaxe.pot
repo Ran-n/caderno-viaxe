@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-06-25 22:53+DST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: caderno-viaxe.py:25
+msgid "*> Engadindo:"
+msgstr ""
+
+#: caderno-viaxe.py:27
+msgid " > Nome"
+msgstr ""
+
+#: caderno-viaxe.py:31
+msgid " > Tipo (1 serie, 2 peli, 3 docu)"
+msgstr ""
+
+#: caderno-viaxe.py:52
+msgid " > Título do contido"
+msgstr ""
+
+#: caderno-viaxe.py:60
+msgid " > Que capítulo? (1x01)"
+msgstr ""
+
+#: caderno-viaxe.py:66
+msgid ""
+"*> Capítulo inválido.\n"
+msgstr ""
+
+#: caderno-viaxe.py:73
+msgid "*> Non existe, engadir? (si[s]/non[n])"
+msgstr ""
+
+#: caderno-viaxe.py:80
+msgid "*> Gardando..."
+msgstr ""
+
+#: caderno-viaxe.py:83
+msgid "*> Talogo"
+msgstr ""
+
+#: caderno-viaxe.py:90
+msgid "*> Elixe a opción:"
+msgstr ""
+
+#: caderno-viaxe.py:92
+msgid "0 - Pechar o programa"
+msgstr ""
+
+#: caderno-viaxe.py:93
+msgid "1 - Engadir contido audiovisual"
+msgstr ""
+
+#: caderno-viaxe.py:94
+msgid "2 - Valorar contido"
+msgstr ""
+
+#: caderno-viaxe.py:96
+msgid "Opción"
+msgstr ""
+
+#: caderno-viaxe.py:103
+msgid ""
+"Selecciona unha das posibles.\n"
+msgstr ""
+

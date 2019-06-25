@@ -1,0 +1,3 @@
+pygettext -d locales/caderno-viaxe caderno-viaxe.py
+
+msgfmt -o locales/en/LC_MESSAGES/caderno-viaxe.mo locales/en/LC_MESSAGES/caderno-viaxe

@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2019-06-25 22:53+DST\n"
+"PO-Revision-Date: 2019-06-25 23:02+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
+
+#: caderno-viaxe.py:25
+msgid "*> Engadindo:"
+msgstr "*> Adding:"
+
+#: caderno-viaxe.py:27
+msgid " > Nome"
+msgstr " > Name"
+
+#: caderno-viaxe.py:31
+msgid " > Tipo (1 serie, 2 peli, 3 docu)"
+msgstr " > Type (1 series, 2 movies, 3 documentaries)"
+
+#: caderno-viaxe.py:52
+msgid " > Título do contido"
+msgstr "> Name of the content"
+
+#: caderno-viaxe.py:60
+msgid " > Que capítulo? (1x01)"
+msgstr " > What chapter? (1x01)"
+
+#: caderno-viaxe.py:66
+msgid "*> Capítulo inválido.\n"
+msgstr "*> Invalid chapter\n"
+
+#: caderno-viaxe.py:73
+msgid "*> Non existe, engadir? (si[s]/non[n])"
+msgstr "*> Does not exist, add? (yes[s]/no[n])"
+
+#: caderno-viaxe.py:80
+msgid "*> Gardando..."
+msgstr "*> Saving ..."
+
+#: caderno-viaxe.py:83
+msgid "*> Talogo"
+msgstr "*> Good Bye"
+
+#: caderno-viaxe.py:90
+msgid "*> Elixe a opción:"
+msgstr "*> Choose the option:"
+
+#: caderno-viaxe.py:92
+msgid "0 - Pechar o programa"
+msgstr "0 - Close the program"
+
+#: caderno-viaxe.py:93
+msgid "1 - Engadir contido audiovisual"
+msgstr "1 - Add audiovisual content"
+
+#: caderno-viaxe.py:94
+msgid "2 - Valorar contido"
+msgstr "2 - Rate content"
+
+#: caderno-viaxe.py:96
+msgid "Opción"
+msgstr "Option"
+
+#: caderno-viaxe.py:103
+msgid "Selecciona unha das posibles.\n"
+msgstr "Select one of the options.\n"

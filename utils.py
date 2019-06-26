@@ -2,7 +2,7 @@
 #+ Autor:	Ran#
 # -*- coding: utf-8 -*-
 #+ Creado:	25/06/2019 21:37:29
-#+ Editado:	25/06/2019 21:37:29
+#+ Editado:	26/06/2019 16:10:44
 #------------------------------------------------------------------------------------------------
 import json
 from pathlib import Path
@@ -15,14 +15,22 @@ def cargar_json(fich):
 		open(fich, 'w').write('{}')
 		return json.loads(open(fich).read())
 #------------------------------------------------------------------------------------------------
+# función de gardado de ficheiros tipo json
 def gardar_json(fich, contido):
-	open(fich, 'w').write(json.dumps(contido, indent=1, sort_keys=False))
+	open(fich, 'w').write(json.dumps(contido, indent=1, sort_keys=False, ensure_ascii=False))
+#------------------------------------------------------------------------------------------------
+def crear_carp(carp):
+	if Path(carp).is_dir():
+		print('ok')
+	else:
+		Path(carp).mkdir(parents=True, exist_ok=True)
 #------------------------------------------------------------------------------------------------
 def epi_valido(epi):
 	if 'x' not in epi:
 		return False
 
 	temp, epi = epi.split('x')
+
 	if (temp.isdigit()) & (int(temp)>0) & (epi.isdigit()):
 		return True
 	else:

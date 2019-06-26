@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
-#+ Editado:	26/06/2019 16:07:25
+#+ Editado:	26/06/2019 16:20:31
 #------------------------------------------------------------------------------------------------
 import json
 from functools import partial
@@ -166,6 +166,11 @@ if __name__=="__main__":
 	#en = gettext.translation('caderno-viaxe', localedir='locales', languages=['en'])
 	#en.install()
 	#_ = en.gettext
+
+	# se non existe creamos o sistema de carpetas
+	u.crear_carp(__cseries)
+	u.crear_carp(__cpelis)
+	u.crear_carp(__cdocus)
 
 	notas = u.cargar_json(__fnotas)
 	indice = u.cargar_json(__findice)

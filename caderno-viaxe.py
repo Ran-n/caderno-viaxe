@@ -8,21 +8,27 @@ import json
 from functools import partial
 import utils as u
 import gettext
+from pathlib import Path
+import time
 #------------------------------------------------------------------------------------------------
 __cmedia = 'media/'
 __cnotas = 'media/notas/'
 __cseries = __cnotas+'s/'
 __cpelis = __cnotas+'p/'
 __cdocus = __cnotas+'d/'
+__cvideo = __cnotas+'v/'
 
-__fnotas = __cmedia + 'notas.json'
-__findice = __cmedia + 'indice.json'
+#__fnotas = __cmedia + 'notas'
+__findice = __cmedia + 'indice'
 
-__cod_serie = 's'
-__cod_peli = 'p'
-__cod_docu = 'd'
+__codes = {'serie': 's',
+			'peli': 'p',
+			'docu': 'd',
+			'video': 'v'}
+
+__sis = ('si', 'yes', 's', 'y')
 #------------------------------------------------------------------------------------------------
-def engadir(indice):
+def engadir(indice, nome = None):
 	existe = False
 	media = {'nome': None,
 			'tipo': None}
@@ -30,8 +36,10 @@ def engadir(indice):
 	print('\n-----------------------')
 	print(_('*> Engadindo:'))
 	print('-----------------------')
-	print(_(' > Nome'), end=': ')
-	nome = input()
+	if nome is None:
+		nome = input(_(' > Nome: '))
+	else:
+		print(_(' > Nome: '), nome)
 
 	for ele in indice.values():
 		if ele['nome'].lower() == nome.lower():
@@ -42,22 +50,23 @@ def engadir(indice):
 		print(_('*> Xa existe compi'))
 	else:
 		media['nome'] = nome
-
 		# para ver que pon un tipo que exista
 		while True:
-			print(_(' > Tipo (1 serie, 2 peli, 3 docu)'), end=': ')
-			tipo = input()
+			tipo = input(_(' > Tipo (1 serie, 2 peli, 3 docu, 4 video): '))
 
 			# segundo o tipo poñemos o seu código
 			if tipo == '1':
-				media['tipo'] = __cod_serie
-				u.crear_carp(nome)
+				media['tipo'] = __codes['serie']
+				u.crear_carp(__cseries+nome)
 				break
 			elif tipo == '2':
-				media['tipo'] = __cod_peli
+				media['tipo'] = __codes['peli']
 				break
 			elif tipo == '3':
-				media['tipo'] = __cod_docu
+				media['tipo'] = __codes['docu']
+				break
+			elif tipo == '4':
+				media['tipo'] = __codes['video']
 				break
 			else:
 				media['tipo'] = 'imposible'
@@ -71,52 +80,67 @@ def engadir(indice):
 	return media['nome'], media['tipo']
 #------------------------------------------------------------------------------------------------
 # función que se encarga de coller e retornar os valores a meter no ficheiro de valoración
-def valorar_aux2():
-	valoracion = {'resumo': None,
-				'opinions': None,
-				'nota': None}
+def valoracion():
+	datos = {'resumo': None,
+			'opinions': None,
+			'nota': None}
 
-	print(_('\nResumo: '))
-	valoracion['resumo'] = input()
+	datos['resumo'] = input(_('\nResumo: '))
 
-	return valoracion
+	#**
+
+	return datos
 #------------------------------------------------------------------------------------------------
 # función auxiliar que se encarga do proceso unha vez sabemos nome e tipo do contido
 def valorar_aux(nome, tipo):
 	# miramos o tipo de contido do que se trata
-	if tipo == __cod_serie:
+	if tipo == __codes['serie']:
 		# miramos que nos diga un epi válido
 		while True:
-			print(_(' > Que capítulo? (1x01)'), end=': ')
-			cap = input().lower()
+			cap = input(_(' > Que capítulo? (1x01): ')).lower()
 			if u.epi_valido(cap):
-				u.gardar_json(__cseries + nome +'/'+ cap+'.json', valorar_aux2())
-				break
+				fich = __cseries + nome +'/'+ cap
+				# miramos se xa existe o ficheiro
+				if Path(fich+'.json').is_file():
+					# se quere sobreescribir a critica
+					if input(_('*> Xa existe, sobreescribir? (s/n): ')).lower() in __sis:
+						u.gardar_json(fich, valoracion())
+						break
+					else:
+						u.gardar_json(fich+'_' + str(time.time()), valoracion())
+						break
+				# se non existe non hai proble
+				else:
+					u.gardar_json(fich, valoracion())
+					break
+
 			else:
 				print(_('*> Capítulo inválido.\n'))
 
-	elif tipo == __cod_peli:
-		u.gardar_json(__cpelis + nome +'.json', valorar_aux2())
+	elif tipo == __codes['peli']:
+		u.gardar_json(__cpelis + nome, valoracion())
 
-	elif tipo == __cod_docu:
-		u.gardar_json(__cdocus + nome +'.json', valorar_aux2())
+	elif tipo == __codes['docu']:
+		u.gardar_json(__cdocus + nome, valoracion())
+
+	elif tipo == __codes['video']:
+		u.gardar_json(__cvideo + nome, valoracion())
 
 	# debería ser imposible que non coincida con ningún código
 	else:
 		print(_('Imposible'))
 #------------------------------------------------------------------------------------------------
-def valorar(indice, notas):
+def valorar(indice):
 	# variable que determina se crear ou non un material audiovisual no indice
 	crear = True
 
 	print('\n-----------------------')
-	print(_(' > Título do contido'), end=': ')
-	nome = input()
+	nome = input(_(' > Título do contido: ')).lower()
 
 	# primeiro miramos se esta no índice, senon crearemolo
 	for ele in indice.values():
 		# se está no índice
-		if ele['nome'].lower() == nome.lower():
+		if ele['nome'] == nome:
 			# pasamos o proceso á función auxiliar
 			valorar_aux(ele['nome'], ele['tipo'])
 
@@ -126,16 +150,38 @@ def valorar(indice, notas):
 
 	# se non está no indice crearemolo
 	if crear:
-		print(_('*> Non existe, engadir? (s/n)'), end=': ')
-		if input() == ('s' or 'y'):
-			nome, tipo = engadir(indice)
+		if input(_('*> Non existe, engadir? (s/n): ')).lower() in __sis:
+			nome, tipo = engadir(indice, nome)
 			valorar_aux(nome, tipo)
 
+#------------------------------------------------------------------------------------------------
+def mostrar(indice):
+	print('\n-----------------------')
+	print(_('*> Contidos:'))
+	print('-----------------------', end='')
+
+	for ele in indice.values():
+		print(_('\nNome: '), ele['nome'])
+		print(_('Tipo: '), u.trad_codes(ele['tipo'], __codes))
+
+	print('-----------------------')
+#------------------------------------------------------------------------------------------------
+def cargas_ini():
+	u.crear_carp(__cseries)
+	u.crear_carp(__cpelis)
+	u.crear_carp(__cdocus)
+	u.crear_carp(__cvideo)
+
+	#notas = u.cargar_json(__fnotas)
+	indice = u.cargar_json(__findice)
+
+	#return notas, indice
+	return indice
 #------------------------------------------------------------------------------------------------
 def pechar():
 	print('\n-----------------------')
 	print(_('*> Gardando...'))
-	u.gardar_json(__fnotas, notas)
+	#u.gardar_json(__fnotas, notas)
 	u.gardar_json(__findice, indice)
 	print(_('*> Talogo'))
 	print('-----------------------')
@@ -150,9 +196,9 @@ def menu():
 		print(_('0  - Pechar o programa, gardando'))
 		print(_('1  - Engadir contido audiovisual'))
 		print(_('2  - Valorar contido'))
+		print(_('3  - Mostrar contidos'))
 
-		print(_('Opción'), end=': ')
-		op = input()
+		op = input(_('Opción: '))
 		print('-----------------------')
 
 		if op in __ops:
@@ -168,19 +214,19 @@ if __name__=="__main__":
 	#_ = en.gettext
 
 	# se non existe creamos o sistema de carpetas
-	u.crear_carp(__cseries)
-	u.crear_carp(__cpelis)
-	u.crear_carp(__cdocus)
+	#notas, indice = cargas_ini()
+	indice = cargas_ini()
 
-	notas = u.cargar_json(__fnotas)
-	indice = u.cargar_json(__findice)
+
 	__ops = {'0.': exit,
 			'0': pechar,
 			'1': partial(engadir, indice),
-			'2': partial(valorar, indice, notas)}
+			'2': partial(valorar, indice),
+			'3': partial(mostrar, indice)}
 
 	while True:
 		__ops[menu()]()
+		input()
 
 	#print('Notas')
 	#print(json.dumps(notas, indent=1, sort_keys=True))

@@ -9,6 +9,7 @@ from pathlib import Path
 #------------------------------------------------------------------------------------------------
 # función encargada de cargar ficheiros tipo json
 def cargar_json(fich):
+	fich = fich +'.json'
 	if Path(fich).is_file():
 		return json.loads(open(fich).read())
 	else:
@@ -17,7 +18,7 @@ def cargar_json(fich):
 #------------------------------------------------------------------------------------------------
 # función de gardado de ficheiros tipo json
 def gardar_json(fich, contido):
-	open(fich, 'w').write(json.dumps(contido, indent=1, sort_keys=False, ensure_ascii=False))
+	open(fich+'.json', 'w').write(json.dumps(contido, indent=1, sort_keys=False, ensure_ascii=False))
 #------------------------------------------------------------------------------------------------
 def crear_carp(carp):
 	if Path(carp).is_dir() == False:
@@ -33,4 +34,17 @@ def epi_valido(epi):
 		return True
 	else:
 		return False
+#------------------------------------------------------------------------------------------------
+def trad_codes(code, codes):
+	if code == codes['serie']:
+		return 'serie'
+
+	if code == codes['video']:
+		return 'video'
+
+	if code == codes['peli']:
+		return 'peli'
+
+	if code == codes['docu']:
+		return 'docu'
 #------------------------------------------------------------------------------------------------

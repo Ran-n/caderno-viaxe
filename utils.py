@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 21:37:29
-#+ Editado:	26/06/2019 16:20:35
+#+ Editado:	27/06/2019 12:45:12
 #------------------------------------------------------------------------------------------------
 import json
 from pathlib import Path
@@ -25,15 +25,13 @@ def crear_carp(carp):
 		Path(carp).mkdir(parents=True, exist_ok=True)
 #------------------------------------------------------------------------------------------------
 def epi_valido(epi):
-	if 'x' not in epi:
-		return False
+	if 'x' in epi:
+		temp, epi = epi.split('x')
 
-	temp, epi = epi.split('x')
+		if (temp.isdigit()) & (epi.isdigit()):
+			return True
 
-	if (temp.isdigit()) & (int(temp)>0) & (epi.isdigit()):
-		return True
-	else:
-		return False
+	return False
 #------------------------------------------------------------------------------------------------
 def trad_codes(code, codes):
 	if code == codes['serie']:

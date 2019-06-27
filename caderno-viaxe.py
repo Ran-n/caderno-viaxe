@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
-#+ Editado:	26/06/2019 16:20:31
+#+ Editado:	27/06/2019 12:43:03
 #------------------------------------------------------------------------------------------------
 import json
 from functools import partial
@@ -11,20 +11,22 @@ import gettext
 from pathlib import Path
 import time
 #------------------------------------------------------------------------------------------------
-__cmedia = 'media/'
-__cnotas = 'media/notas/'
-__cseries = __cnotas+'s/'
-__cpelis = __cnotas+'p/'
-__cdocus = __cnotas+'d/'
-__cvideo = __cnotas+'v/'
-
-#__fnotas = __cmedia + 'notas'
-__findice = __cmedia + 'indice'
-
 __codes = {'serie': 's',
 			'peli': 'p',
 			'docu': 'd',
-			'video': 'v'}
+			'video': 'v',
+			'libro': 'l'}
+
+__cmedia = 'media/'
+__cnotas = 'media/notas/'
+__cseries = __cnotas+__codes['serie']+'/'
+__cpelis = __cnotas+__codes['peli']+'/'
+__cdocus = __cnotas+__codes['docu']+'/'
+__cvideos = __cnotas+__codes['video']+'/'
+__clibros = __cnotas+__codes['libro']+'/'
+
+#__fnotas = __cmedia + 'notas'
+__findice = __cmedia + 'indice'
 
 __sis = ('si', 'yes', 's', 'y')
 #------------------------------------------------------------------------------------------------
@@ -52,7 +54,7 @@ def engadir(indice, nome = None):
 		media['nome'] = nome
 		# para ver que pon un tipo que exista
 		while True:
-			tipo = input(_(' > Tipo (1 serie, 2 peli, 3 docu, 4 video): '))
+			tipo = input(_(' > Tipo (1 serie, 2 peli, 3 docu, 4 video, 5 libro): '))
 
 			# segundo o tipo poñemos o seu código
 			if tipo == '1':
@@ -68,10 +70,14 @@ def engadir(indice, nome = None):
 			elif tipo == '4':
 				media['tipo'] = __codes['video']
 				break
+			elif tipo == '5':
+				media['tipo'] = __codes['libro']
+				break
 			else:
 				media['tipo'] = 'imposible'
 
 		# engadimos o contido audiovisual á colección xeral
+		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou  
 		indice[len(indice)] = media
 
 	print('-----------------------')
@@ -124,7 +130,10 @@ def valorar_aux(nome, tipo):
 		u.gardar_json(__cdocus + nome, valoracion())
 
 	elif tipo == __codes['video']:
-		u.gardar_json(__cvideo + nome, valoracion())
+		u.gardar_json(__cvideos + nome, valoracion())
+
+	elif tipo == __codes['libro']:
+		u.gardar_json(__clibros + nome, valoracion())
 
 	# debería ser imposible que non coincida con ningún código
 	else:
@@ -170,7 +179,8 @@ def cargas_ini():
 	u.crear_carp(__cseries)
 	u.crear_carp(__cpelis)
 	u.crear_carp(__cdocus)
-	u.crear_carp(__cvideo)
+	u.crear_carp(__cvideos)
+	u.crear_carp(__clibros)
 
 	#notas = u.cargar_json(__fnotas)
 	indice = u.cargar_json(__findice)

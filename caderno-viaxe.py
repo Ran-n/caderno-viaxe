@@ -77,7 +77,7 @@ def engadir(indice, nome = None):
 				media['tipo'] = 'imposible'
 
 		# engadimos o contido audiovisual á colección xeral
-		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou  
+		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
 		indice[len(indice)] = media
 
 	print('-----------------------')

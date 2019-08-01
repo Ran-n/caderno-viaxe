@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
-#+ Editado:	24/07/2019 17:58:15
+#+ Editado:	01/08/2019 14:07:40
 #------------------------------------------------------------------------------------------------
 import utils as u
+from khronos import khronos as kh
+from base36 import base36 as b36
+# ------
 import json
 from functools import partial
 import gettext
 from pathlib import Path
-import time
 #------------------------------------------------------------------------------------------------
 # función principal que engade un contido co seu código ao ficheiro e índice
 def engadir(indice, nome = None):
@@ -27,6 +29,7 @@ def engadir(indice, nome = None):
 	else:
 		print(_(' > Nome: '), nome)
 
+	# miramos se o que queremos meter xa existe sabendo que so pode haber un nome
 	for ele in indice.values():
 		if ele['nome'].lower() == nome.lower():
 			existe = True
@@ -63,7 +66,7 @@ def engadir(indice, nome = None):
 		# engadimos o contido audiovisual á colección xeral
 		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
 		# en lugar de poñer un simple número usaremos o tempo no que foi creado en base32
-		indice[len(indice)] = media
+		indice[b36.code(kh.getAgora())] = media
 
 	print('-----------------------')
 
@@ -74,8 +77,8 @@ def engadir(indice, nome = None):
 def valoracion():
 	datos = {'resumo': None,
 			'opinions': None,
-			'nota': None,
-			'valoracion': None}
+			'valoracion': None,
+			'nota': None}
 
 	datos['resumo'] = input(_('\nResumo: '))
 	datos['opinions'] = input(_('\nOpinions: '))
@@ -96,31 +99,31 @@ def valorar_aux(nome, tipo):
 				# miramos se xa existe o ficheiro
 				if Path(fich+'.json').is_file():
 					# se quere sobreescribir a critica
-					if input(_('*> Xa existe, sobreescribir? (s/n): ')).lower() in __sis:
-						u.gardar_json(fich, valoracion())
+					if u.snValido(input(_('*> Xa existe, sobreescribir? (s/n): ')).lower()) == (True, True):
+						u.gardar_json(fich+'.json', valoracion())
 						break
 					else:
-						u.gardar_json(fich+'_' + str(time.time()), valoracion())
+						u.gardar_json(fich+'_'+str(b36.code(kh.getAgora()))+'.json', valoracion())
 						break
 				# se non existe non hai proble
 				else:
-					u.gardar_json(fich, valoracion())
+					u.gardar_json(fich+'.json', valoracion())
 					break
 
 			else:
 				print(_('*> Capítulo inválido.\n'))
 
 	elif tipo == __codes['peli']:
-		u.gardar_json(__carpetas['peli'] + nome, valoracion())
+		u.gardar_json(__carpetas['peli'] + nome+'.json', valoracion())
 
 	elif tipo == __codes['docu']:
-		u.gardar_json(__carpetas['docu'] + nome, valoracion())
+		u.gardar_json(__carpetas['docu'] + nome+'.json', valoracion())
 
 	elif tipo == __codes['video']:
-		u.gardar_json(__carpetas['video'] + nome, valoracion())
+		u.gardar_json(__carpetas['video'] + nome+'.json', valoracion())
 
 	elif tipo == __codes['libro']:
-		u.gardar_json(__carpetas['libro'] + nome, valoracion())
+		u.gardar_json(__carpetas['libro'] + nome+'.json', valoracion())
 
 	# debería ser imposible que non coincida con ningún código
 	else:
@@ -144,10 +147,9 @@ def valorar(indice):
 
 	# se non está no indice crearemolo
 	if crear:
-		if input(_('*> Non existe, engadir? (s/n): ')).lower() in __sis:
+		if u.snValido(input(_('*> Non existe, engadir? (s/n): ')).lower()) == (True, True):
 			nome, tipo = engadir(indice, nome)
 			valorar_aux(nome, tipo)
-
 #------------------------------------------------------------------------------------------------
 # función principal que se encarga de mostrar os contidos dentro do ficheiro de indice
 def mostrar(indice):
@@ -203,6 +205,12 @@ if __name__=="__main__":
 	#en.install()
 	#_ = en.gettext
 
+	# valores que mete o ficheiro de configuración
+	'''	__config garda:
+	ruta
+	lang'''
+	__config = u.read_config()
+
 	# diccionario con códigos para cada tipo de elemento
 	__codes = {'serie': 's',
 				'peli': 'p',
@@ -218,7 +226,7 @@ if __name__=="__main__":
 	__codsIdiomas = {}
 
 	# rutas do sistema de carpetas, unha xeral e unha para cada tipo de elemento
-	__cbase = 'opinions/'
+	__cbase = __config['ruta']+'/'+'opinions/'
 	__cnotas = __cbase + 'anotacións/'
 	__carpetas = {
 				'serie': __cnotas + __codes['serie'] + '/',
@@ -234,15 +242,12 @@ if __name__=="__main__":
 	__findice = __cbase + 'indice.json'
 
 	## Asignacións ----------------------
+
+
 	# se non existe creamos o sistema de carpetas completo
 	# metemos en memoria os contidos do ficheiro índice
 	indice = iniciar()
 
-	# valores que mete o ficheiro de configuración
-	'''	__config garda:
-	ruta
-	lang'''
-	__config = u.read_config()
 
 	#a# non creo unha función de manual e automático porque só esta pensado para manual
 	# diccionario con todas as opcións posibles
@@ -255,5 +260,4 @@ if __name__=="__main__":
 
 	while True:
 		__ops[menu()]()
-		#input()
 #------------------------------------------------------------------------------------------------

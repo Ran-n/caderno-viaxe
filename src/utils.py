@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 21:37:29
-#+ Editado:	24/07/2019 00:42:06
+#+ Editado:	01/08/2019 14:07:45
 ## caderno-viaxe.py
 #------------------------------------------------------------------------------------------------
 import json
@@ -19,7 +19,6 @@ lang=gl
 #------------------------------------------------------------------------------------------------
 # función encargada de cargar ficheiros tipo json coa extensión dada se se dá
 def cargar_json(fich):
-	fich = fich
 	if Path(fich).is_file():
 		return json.loads(open(fich).read())
 	else:

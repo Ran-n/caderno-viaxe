@@ -11,6 +11,7 @@ import gettext
 from pathlib import Path
 import time
 #------------------------------------------------------------------------------------------------
+# función principal que engade un contido co seu código ao ficheiro e índice
 def engadir(indice, nome = None):
 	existe = False
 	media = {'nome': None,
@@ -20,7 +21,7 @@ def engadir(indice, nome = None):
 	print(_('*> Engadindo:'))
 	print('-----------------------')
 	# se xa nos dan o nome non fai falla sacar o de que nos diga o nome
-	# un exemplo sería en valorar, que o nome 
+	# un exemplo sería en valorar, que o nome
 	if nome is None:
 		nome = input(_(' > Nome: '))
 	else:
@@ -61,6 +62,7 @@ def engadir(indice, nome = None):
 
 		# engadimos o contido audiovisual á colección xeral
 		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
+		# en lugar de poñer un simple número usaremos o tempo no que foi creado en base32
 		indice[len(indice)] = media
 
 	print('-----------------------')
@@ -68,15 +70,17 @@ def engadir(indice, nome = None):
 	# devolvemos estes valores engadidos se é que se queren
 	return media['nome'], media['tipo']
 #------------------------------------------------------------------------------------------------
-# función que se encarga de coller e retornar os valores a meter no ficheiro de valoración
+# función auxiliar que se encarga de coller e retornar os valores a meter no ficheiro de valoración
 def valoracion():
 	datos = {'resumo': None,
 			'opinions': None,
-			'nota': None}
+			'nota': None,
+			'valoracion': None}
 
 	datos['resumo'] = input(_('\nResumo: '))
-
-	#**
+	datos['opinions'] = input(_('\nOpinions: '))
+	datos['valoracion'] = input(_('\nValoración: '))
+	datos['nota'] = input(_('\nNota: '))
 
 	return datos
 #------------------------------------------------------------------------------------------------
@@ -122,6 +126,7 @@ def valorar_aux(nome, tipo):
 	else:
 		print(_('Imposible'))
 #------------------------------------------------------------------------------------------------
+# función encargada da valoración dos contidos
 def valorar(indice):
 	# variable que determina se crear ou non un material audiovisual no indice
 	crear = True
@@ -163,7 +168,7 @@ def iniciar():
 	# carga e devolve o ficheiro de índice
 	return u.cargar_json(__findice)
 #------------------------------------------------------------------------------------------------
-# función que se encarga de facer todo o pertinente para pechar o programa
+# función que se encarga de facer todo o pertinente para pechar o programa gardandoo
 def pechar():
 	print('\n-----------------------')
 	print(_('*> Gardando...'))
@@ -177,11 +182,10 @@ def menu():
 		print('\n-----------------------')
 		print(_('*> Elixe a opción:'))
 		print('-----------------------')
-		print(_('0. - Pechar o programa, sen gardar'))
-		print(_('0  - Pechar o programa, gardando'))
-		print(_('1  - Engadir contido audiovisual'))
-		print(_('2  - Valorar contido'))
-		print(_('3  - Mostrar contidos'))
+		print(_('0 - Pechar o programa (0. para sair sen gardar)'))
+		print(_('1 - Engadir contido audiovisual ao índice'))
+		print(_('2 - Valorar contido'))
+		print(_('3 - Mostrar contidos'))
 
 		op = input(_('Opción: '))
 		print('-----------------------')
@@ -226,13 +230,15 @@ if __name__=="__main__":
 				'artigo': __cnotas + __codes['artigo'] + '/'
 				}
 
+	# ficheiro co índice de tódas as críticas
 	__findice = __cbase + 'indice.json'
 
 	## Asignacións ----------------------
 	# se non existe creamos o sistema de carpetas completo
-	# metemos en memoria os contidos do índice
+	# metemos en memoria os contidos do ficheiro índice
 	indice = iniciar()
 
+	# valores que mete o ficheiro de configuración
 	'''	__config garda:
 	ruta
 	lang'''
@@ -250,8 +256,4 @@ if __name__=="__main__":
 	while True:
 		__ops[menu()]()
 		#input()
-	#print('Notas')
-	#print(json.dumps(notas, indent=1, sort_keys=True))
-	#print('Índice')
-	#print(json.dumps(indice, indent=1, sort_keys=True))
 #------------------------------------------------------------------------------------------------

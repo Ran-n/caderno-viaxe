@@ -30,9 +30,14 @@ def cargar_json(fich):
 def gardar_json(fich, contido):
 	open(fich, 'w').write(json.dumps(contido, indent=1, sort_keys=False, ensure_ascii=False))
 #------------------------------------------------------------------------------------------------
+# se existe, crea unha carpeta
 def crear_carp(carp):
 	if Path(carp).is_dir() == False:
 		Path(carp).mkdir(parents=True, exist_ok=True)
+#------------------------------------------------------------------------------------------------
+# imprime un diccionario en modo bonito
+def pJson(diccionario, sort=False):
+	print(json.dumps(diccionario, indent=4, sort_keys=sort))
 #------------------------------------------------------------------------------------------------
 # función que se encarga de devolver verdadeiro se o episodio esta ben posto
 def epi_valido(epi):

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
-#+ Editado:	24/07/2019 00:42:03
+#+ Editado:	24/07/2019 17:58:15
 #------------------------------------------------------------------------------------------------
+import utils as u
 import json
 from functools import partial
-import utils as u
 import gettext
 from pathlib import Path
 import time
@@ -19,6 +19,8 @@ def engadir(indice, nome = None):
 	print('\n-----------------------')
 	print(_('*> Engadindo:'))
 	print('-----------------------')
+	# se xa nos dan o nome non fai falla sacar o de que nos diga o nome
+	# un exemplo sería en valorar, que o nome 
 	if nome is None:
 		nome = input(_(' > Nome: '))
 	else:
@@ -40,7 +42,7 @@ def engadir(indice, nome = None):
 			# segundo o tipo poñemos o seu código
 			if tipo == '1':
 				media['tipo'] = __codes['serie']
-				u.crear_carp(__cseries+nome)
+				u.crear_carp(__carpetas['serie']+nome)
 				break
 			elif tipo == '2':
 				media['tipo'] = __codes['peli']
@@ -86,7 +88,7 @@ def valorar_aux(nome, tipo):
 		while True:
 			cap = input(_(' > Que capítulo? (1x01): ')).lower()
 			if u.epi_valido(cap):
-				fich = __cseries + nome +'/'+ cap
+				fich = __carpetas['serie'] + nome +'/'+ cap
 				# miramos se xa existe o ficheiro
 				if Path(fich+'.json').is_file():
 					# se quere sobreescribir a critica
@@ -105,16 +107,16 @@ def valorar_aux(nome, tipo):
 				print(_('*> Capítulo inválido.\n'))
 
 	elif tipo == __codes['peli']:
-		u.gardar_json(__cpelis + nome, valoracion())
+		u.gardar_json(__carpetas['peli'] + nome, valoracion())
 
 	elif tipo == __codes['docu']:
-		u.gardar_json(__cdocus + nome, valoracion())
+		u.gardar_json(__carpetas['docu'] + nome, valoracion())
 
 	elif tipo == __codes['video']:
-		u.gardar_json(__cvideos + nome, valoracion())
+		u.gardar_json(__carpetas['video'] + nome, valoracion())
 
 	elif tipo == __codes['libro']:
-		u.gardar_json(__clibros + nome, valoracion())
+		u.gardar_json(__carpetas['libro'] + nome, valoracion())
 
 	# debería ser imposible que non coincida con ningún código
 	else:
@@ -123,17 +125,14 @@ def valorar_aux(nome, tipo):
 def valorar(indice):
 	# variable que determina se crear ou non un material audiovisual no indice
 	crear = True
-
 	print('\n-----------------------')
 	nome = input(_(' > Título do contido: ')).lower()
-
 	# primeiro miramos se esta no índice, senon crearemolo
 	for ele in indice.values():
 		# se está no índice
 		if ele['nome'] == nome:
 			# pasamos o proceso á función auxiliar
 			valorar_aux(ele['nome'], ele['tipo'])
-
 			crear = False
 			print('-----------------------')
 			break
@@ -145,6 +144,7 @@ def valorar(indice):
 			valorar_aux(nome, tipo)
 
 #------------------------------------------------------------------------------------------------
+# función principal que se encarga de mostrar os contidos dentro do ficheiro de indice
 def mostrar(indice):
 	print('\n-----------------------')
 	print(_('*> Contidos:'))
@@ -156,23 +156,17 @@ def mostrar(indice):
 
 	print('-----------------------')
 #------------------------------------------------------------------------------------------------
+# función que se encarga de facer todo o preciso para comezar o programa
 def iniciar():
-	u.crear_carp(__cseries)
-	u.crear_carp(__cpelis)
-	u.crear_carp(__cdocus)
-	u.crear_carp(__cvideos)
-	u.crear_carp(__clibros)
-
-	#notas = u.cargar_json(__fnotas)
-	indice = u.cargar_json(__findice)
-
-	#return notas, indice
-	return indice
+	# crea todo o sistema de ficheiros
+	[u.crear_carp(valor) for valor in __carpetas.values()]
+	# carga e devolve o ficheiro de índice
+	return u.cargar_json(__findice)
 #------------------------------------------------------------------------------------------------
+# función que se encarga de facer todo o pertinente para pechar o programa
 def pechar():
 	print('\n-----------------------')
 	print(_('*> Gardando...'))
-	#u.gardar_json(__fnotas, notas)
 	u.gardar_json(__findice, indice)
 	print(_('*> Talogo'))
 	print('-----------------------')
@@ -200,7 +194,6 @@ def menu():
 #------------------------------------------------------------------------------------------------
 if __name__=="__main__":
 	## Declaracións ----------------------
-
 	_ = gettext.gettext
 	#en = gettext.translation('caderno-viaxe', localedir='locales', languages=['en'])
 	#en.install()
@@ -213,30 +206,36 @@ if __name__=="__main__":
 				'video': 'v',
 				'libro': 'l',
 				'musica': 'm',
-				'artigo': 'a'}
+				'artigo': 'a'
+			}
 
 	# nome do ficheiro e variable onde se gardarán todos os idiomas coas súas claves
 	__fcodsIdiomas = '../media/codesIdiomas'
 	__codsIdiomas = {}
 
 	# rutas do sistema de carpetas, unha xeral e unha para cada tipo de elemento
-	__copinions = 'opinions/'
-	__cnotas = __copinions + 'notas/'
-	__cseries = __cnotas+__codes['serie']+'/'
-	__cpelis = __cnotas+__codes['peli']+'/'
-	__cdocus = __cnotas+__codes['docu']+'/'
-	__cvideos = __cnotas+__codes['video']+'/'
-	__clibros = __cnotas+__codes['libro']+'/'
+	__cbase = 'opinions/'
+	__cnotas = __cbase + 'anotacións/'
+	__carpetas = {
+				'serie': __cnotas + __codes['serie'] + '/',
+				'peli': __cnotas + __codes['peli'] + '/',
+				'docu': __cnotas + __codes['docu'] + '/',
+				'video': __cnotas + __codes['video'] + '/',
+				'libro': __cnotas + __codes['libro'] + '/',
+				'musica': __cnotas + __codes['musica'] + '/',
+				'artigo': __cnotas + __codes['artigo'] + '/'
+				}
 
-	#__fnotas = __copinions + 'notas'
-	__findice = __copinions + 'indice.json'
+	__findice = __cbase + 'indice.json'
 
 	## Asignacións ----------------------
-
-	# se non existe creamos o sistema de carpetas
-	#notas, indice = iniciar()
+	# se non existe creamos o sistema de carpetas completo
+	# metemos en memoria os contidos do índice
 	indice = iniciar()
 
+	'''	__config garda:
+	ruta
+	lang'''
 	__config = u.read_config()
 
 	#a# non creo unha función de manual e automático porque só esta pensado para manual
@@ -250,7 +249,7 @@ if __name__=="__main__":
 
 	while True:
 		__ops[menu()]()
-		input()
+		#input()
 	#print('Notas')
 	#print(json.dumps(notas, indent=1, sort_keys=True))
 	#print('Índice')

@@ -15,6 +15,12 @@ ruta = .
 # selecionar o idioma para a versión interactiva
 # galego (gl), inglés (en), castelán (es)
 lang=gl
+
+#nome da carpeta base do proxecto
+nom_base=opinions
+
+#nome da carpeta onde se gardan as anotacións
+nom_anotacions=anotacións
 '''
 #------------------------------------------------------------------------------------------------
 # función encargada de cargar ficheiros tipo json coa extensión dada se se dá

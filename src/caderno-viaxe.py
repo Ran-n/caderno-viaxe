@@ -226,8 +226,8 @@ if __name__=="__main__":
 	__codsIdiomas = {}
 
 	# rutas do sistema de carpetas, unha xeral e unha para cada tipo de elemento
-	__cbase = __config['ruta']+'/'+'opinions/'
-	__cnotas = __cbase + 'anotacións/'
+	__cbase = __config['ruta']+ '/' +__config['nom_base'] + '/'
+	__cnotas = __cbase + __config['nom_anotacions'] + '/'
 	__carpetas = {
 				'serie': __cnotas + __codes['serie'] + '/',
 				'peli': __cnotas + __codes['peli'] + '/',

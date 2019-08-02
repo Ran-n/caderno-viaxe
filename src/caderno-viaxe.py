@@ -14,7 +14,7 @@ import gettext
 from pathlib import Path
 #------------------------------------------------------------------------------------------------
 # función principal que engade un contido co seu código ao ficheiro e índice
-def engadir(indice, nome = None):
+def engadir(nome = None):
 	existe = False
 	media = {'nome': None,
 			'tipo': None}
@@ -30,7 +30,7 @@ def engadir(indice, nome = None):
 		print(_(' > Nome: '), nome)
 
 	# miramos se o que queremos meter xa existe sabendo que so pode haber un nome
-	for ele in indice.values():
+	for ele in __indice.values():
 		if ele['nome'].lower() == nome.lower():
 			existe = True
 			break
@@ -66,7 +66,7 @@ def engadir(indice, nome = None):
 		# engadimos o contido audiovisual á colección xeral
 		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
 		# en lugar de poñer un simple número usaremos o tempo no que foi creado en base32
-		indice[b36.code(kh.getAgora())] = media
+		__indice[b36.code(kh.getAgora())] = media
 
 	print('-----------------------')
 
@@ -130,13 +130,13 @@ def valorar_aux(nome, tipo):
 		print(_('Imposible'))
 #------------------------------------------------------------------------------------------------
 # función encargada da valoración dos contidos
-def valorar(indice):
+def valorar():
 	# variable que determina se crear ou non un material audiovisual no indice
 	crear = True
 	print('\n-----------------------')
 	nome = input(_(' > Título do contido: ')).lower()
 	# primeiro miramos se esta no índice, senon crearemolo
-	for ele in indice.values():
+	for ele in __indice.values():
 		# se está no índice
 		if ele['nome'] == nome:
 			# pasamos o proceso á función auxiliar
@@ -148,18 +148,33 @@ def valorar(indice):
 	# se non está no indice crearemolo
 	if crear:
 		if u.snValido(input(_('*> Non existe, engadir? (s/n): ')).lower()) == (True, True):
-			nome, tipo = engadir(indice, nome)
+			nome, tipo = engadir(nome)
 			valorar_aux(nome, tipo)
 #------------------------------------------------------------------------------------------------
 # función principal que se encarga de mostrar os contidos dentro do ficheiro de indice
-def mostrar(indice):
+def mostrar():
 	print('\n-----------------------')
 	print(_('*> Contidos:'))
 	print('-----------------------', end='')
 
-	for ele in indice.values():
+	for ele in __indice.values():
 		print(_('\nNome: '), ele['nome'])
 		print(_('Tipo: '), u.trad_codes(ele['tipo'], __codes))
+
+	print('-----------------------')
+#------------------------------------------------------------------------------------------------
+# dado un texto clave saca as coincidencias
+def buscar():
+	print('\n-----------------------')
+	texto = input(_(' > Texto a buscar nos títulos: '))
+	print('\n-----------------------')
+	print(_('*> Contidos:'))
+	print('-----------------------', end='')
+
+	for ele in __indice.values():
+		if texto in ele['nome']:
+			print(_('\nNome: '), ele['nome'])
+			print(_('Tipo: '), u.trad_codes(ele['tipo'], __codes))
 
 	print('-----------------------')
 #------------------------------------------------------------------------------------------------
@@ -174,7 +189,7 @@ def iniciar():
 def pechar():
 	print('\n-----------------------')
 	print(_('*> Gardando...'))
-	u.gardar_json(__findice, indice)
+	u.gardar_json(__findice, __indice)
 	print(_('*> Talogo'))
 	print('-----------------------')
 	exit()
@@ -188,6 +203,7 @@ def menu():
 		print(_('1 - Engadir contido audiovisual ao índice'))
 		print(_('2 - Valorar contido'))
 		print(_('3 - Mostrar contidos'))
+		print(_('4 - Buscar por titulo'))
 
 		op = input(_('Opción: '))
 		print('-----------------------')
@@ -246,18 +262,20 @@ if __name__=="__main__":
 
 	# se non existe creamos o sistema de carpetas completo
 	# metemos en memoria os contidos do ficheiro índice
-	indice = iniciar()
+	__indice = iniciar()
 
 
 	#a# non creo unha función de manual e automático porque só esta pensado para manual
 	# diccionario con todas as opcións posibles
 	__ops = {'0.': exit,
 			'0': pechar,
-			'1': partial(engadir, indice),
-			'2': partial(valorar, indice),
-			'3': partial(mostrar, indice)
+			'1': engadir,
+			'2': valorar,
+			'3': mostrar,
+			'4': buscar
 			}
 
 	while True:
 		__ops[menu()]()
+		input(_('Intro para continuar'))
 #------------------------------------------------------------------------------------------------

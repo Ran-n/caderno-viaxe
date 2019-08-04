@@ -105,7 +105,7 @@ def valoracion(tipo, xenero_base):
 	# nota
 	while True:
 		nota = input(_('\nNota (0-100): '))
-		if nota.isdigit() and nota >= '0' and nota <= '100':
+		if nota.isdigit() and int(nota) >= 0 and int(nota) <= 100:
 			datos['nota'] = nota
 			break
 
@@ -324,7 +324,7 @@ def edicion_aux(contido, xenero_base):
 			while True:
 				if ele == 'nota':
 					meter = input(ele+': ')
-					if meter.isdigit() and meter >= '0' and meter <= '100':
+					if meter.isdigit() and int(meter) >= 0 and int(meter) <= 100:
 						contido[ele] = meter
 						break
 				elif ele == 'lonxitude':

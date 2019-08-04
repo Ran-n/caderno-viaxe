@@ -1,6 +1,6 @@
 # caderno-viaxe
 
-git-clone --recursive https://github.com/Ran-n/caderno-viaxe
+git clone --recursive https://github.com/Ran-n/caderno-viaxe
 
 ----
 

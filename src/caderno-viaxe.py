@@ -43,7 +43,7 @@ def engadir(nome = None):
 		media['nome'] = nome
 		# para ver que pon un tipo que exista
 		while True:
-			tipo = input(_(' > Tipo (1 serie, 2 peli, 3 docu, 4 video, 5 libro, 6 música, 7 artido): '))
+			tipo = input(_(' > Tipo (1 serie, 2 peli, 3 docu, 4 video, 5 libro, 6 música, 7 artigo): '))
 
 			# segundo o tipo poñemos o seu código
 			if tipo == '1':
@@ -65,7 +65,7 @@ def engadir(nome = None):
 			elif tipo == '6':
 				media['tipo'] = __codes['musica']
 				break
-			elif tipo == '5':
+			elif tipo == '7':
 				media['artigo'] = __codes['artigo']
 				break
 			else:
@@ -123,11 +123,14 @@ def valoracion(tipo, xenero_base):
 	datos['data_saida'] = input(_('\nData de saída: '))
 
 	# lonxitude
-	datos['lonxitude'] = input(_('\nDuración (só o número): '))
-	if xenero_base == 'literatura':
-		datos['lonxitude'] = datos['lonxitude'] + ' páxinas'
-	else:
-		datos['lonxitude'] = datos['lonxitude'] + ' minutos'
+	while True:
+		valor = input(_('\nDuración (só o número): '))
+		if valor.isdigit():
+			if xenero_base == 'literatura':
+				datos['lonxitude'] = valor + ' páxinas'
+			else:
+				datos['lonxitude'] = valor + ' minutos'
+			break
 
 	# xenero
 	while True:
@@ -282,7 +285,9 @@ def valorar():
 	# se non está no indice crearemolo
 	if crear:
 		if u.snValido(input(_('*> Non existe, engadir? (s/n): ')).lower()) == (True, True):
-			valorar_aux(engadir(nome))
+			# haino que poñer así porque devolvemos dous valores e senón peta poñeendoo directamente
+			nome, tipo = engadir(nome)
+			valorar_aux(nome, tipo)
 #------------------------------------------------------------------------------------------------
 # función principal que se encarga de mostrar os contidos dentro do ficheiro de indice
 def mostrar():
@@ -317,12 +322,13 @@ def edicion_aux(contido, xenero_base):
 		print(ele,': ', contido[ele])
 		if u.snValido(input(_('Cambiar? (s/n): '))) == (True, True):
 			while True:
-				meter = input(ele+': ')
 				if ele == 'nota':
+					meter = input(ele+': ')
 					if meter.isdigit() and meter >= '0' and meter <= '100':
 						contido[ele] = meter
 						break
 				elif ele == 'lonxitude':
+					meter = input(ele+': ')
 					if meter.isdigit():
 						if contido[ele].endswith('minutos'):
 							contido[ele] = meter + ' minutos'
@@ -330,6 +336,7 @@ def edicion_aux(contido, xenero_base):
 							contido[ele] = meter + ' páxinas'
 						break
 				elif ele == 'xenero':
+					meter = input(ele+': ')
 					# quitamoslle os posibles acentos
 					meter = unidecode(meter)
 					if meter == '?':
@@ -338,20 +345,26 @@ def edicion_aux(contido, xenero_base):
 						contido['xenero'] = meter
 						break
 				elif ele == 'idioma':
+					meter = input(ele+': ')
 					if meter == '?':
 						u.pJson([ele for ele in __codsIdiomas.keys()])
 					elif meter in __codsIdiomas:
 						contido['idioma'] = meter
 						break
 				elif ele == 'data_ini':
-					contido['data_ini'] = kh.getAgora()
+					meter = kh.getAgora()
+					input(ele+': '+meter)
+					contido['data_ini'] = meter
 					break
 
 				elif ele == 'data_fin':
-					contido['data_fin'] = kh.getAgora()
+					meter = kh.getAgora()
+					input(ele+': '+meter)
+					contido['data_fin'] = meter
 					break
 
 				else:
+					meter = input(ele+': ')
 					contido[ele] = meter
 					break
 		print('-----------------------')

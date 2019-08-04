@@ -20,7 +20,7 @@ lang=gl
 nom_base=opinions
 
 #nome da carpeta onde se gardan as anotacións
-nom_anotacions=anotacións
+nom_anotacions=anotacions
 '''
 #------------------------------------------------------------------------------------------------
 # función encargada de cargar ficheiros tipo json coa extensión dada se se dá

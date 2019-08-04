@@ -125,7 +125,7 @@ def valoracion(tipo, xenero_base):
 	# lonxitude
 	while True:
 		valor = input(_('\nDuración (só o número): '))
-		if valor.isdigit():
+		if valor.replace(',','').replace('.','').isdigit():
 			if xenero_base == 'literatura':
 				datos['lonxitude'] = valor + ' páxinas'
 			else:
@@ -329,7 +329,7 @@ def edicion_aux(contido, xenero_base):
 						break
 				elif ele == 'lonxitude':
 					meter = input(ele+': ')
-					if meter.isdigit():
+					if meter.replace(',','').replace('.','').isdigit():
 						if contido[ele].endswith('minutos'):
 							contido[ele] = meter + ' minutos'
 						else:

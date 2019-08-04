@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 21:37:29
-#+ Editado:	01/08/2019 14:07:45
+#+ Editado:	05/08/2019 00:01:07
 ## caderno-viaxe.py
 #------------------------------------------------------------------------------------------------
 import json
@@ -62,10 +62,19 @@ def trad_codes(code, codes):
 		return 'video'
 
 	if code == codes['peli']:
-		return 'peli'
+		return 'película'
 
 	if code == codes['docu']:
-		return 'docu'
+		return 'documental'
+
+	if code == codes['musica']:
+		return 'música'
+
+	if code == codes['artigo']:
+		return 'artigo'
+		
+	if code == codes['libro']:
+		return 'libro'
 #------------------------------------------------------------------------------------------------
 # función que devolve verdadeiro ou falso dependendo de se a entrada está dentro
 # das respostas positivas ou negativas válidas e verdadeiro ou falso para o tipo

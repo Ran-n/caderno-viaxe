@@ -1,5 +1,15 @@
 {
-  "es": ["español", "spanish"],
-  "en": ["inglés", "english"],
-  "gl": ["galego", "gallician", "gallego"]
+ "es": [
+  "espanhol",
+  "spanish"
+ ],
+ "en": [
+  "ingles",
+  "english"
+ ],
+ "gl": [
+  "galego",
+  "gallician",
+  "gallego"
+ ]
 }

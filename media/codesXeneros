@@ -1,0 +1,21 @@
+{
+ "audiovisual": [
+  "thriller"
+ ],
+ "literatura": [
+  "novela",
+  "narrativa",
+  "novela fantastica",
+  "teatro",
+  "ensaio",
+  "relatos curtos",
+  "poesia",
+  "poesia narrativa",
+  "conto",
+  "fabula",
+  "manga"
+ ],
+ "musica": [
+  "rock"
+ ]
+}

@@ -61,6 +61,7 @@ def engadir(nome = None):
 				break
 			elif tipo == '5':
 				media['tipo'] = __codes['libro']
+				u.crear_carp(__carpetas['libro']+nome)
 				break
 			elif tipo == '6':
 				media['tipo'] = __codes['musica']
@@ -231,14 +232,28 @@ def valorar_aux(nome, tipo):
 
 	elif tipo == __codes['libro']:
 		fich = __carpetas['libro'] + nome
-		# miramos se xa existe o ficheiro
-		if Path(fich+'.json').is_file():
-			if u.snValido(input(_('*> Xa existe, sobreescribir? (s/n): ')).lower()) == (True, True):
-				u.gardar_json(fich+'.json', valoracion(tipo, "literatura"))
+
+		# miramos que nos diga un epi válido
+		while True:
+			cap = input(_(' > Que capítulo? (1): ')).lower()
+			if cap.isdigit():
+				fich = __carpetas['libro'] + nome +'/'+ cap
+				# miramos se xa existe o ficheiro
+				if Path(fich+'.json').is_file():
+					# se quere sobreescribir a critica
+					if u.snValido(input(_('*> Xa existe, sobreescribir? (s/n): ')).lower()) == (True, True):
+						u.gardar_json(fich+'.json', valoracion(tipo, "literatura"))
+						break
+					else:
+						u.gardar_json(fich+'_'+str(b36.code(kh.getAgora()))+'.json', valoracion(tipo, "literatura"))
+						break
+				# se non existe non hai proble
+				else:
+					u.gardar_json(fich+'.json', valoracion(tipo, "literatura"))
+					break
+
 			else:
-				u.gardar_json(fich+'_'+str(b36.code(kh.getAgora()))+'.json', valoracion(tipo, "literatura"))
-		else:
-			u.gardar_json(fich+'.json', valoracion(tipo, "literatura"))
+				print(_('*> Capítulo inválido.\n'))
 
 	elif tipo == __codes['artigo']:
 		fich = __carpetas['artigo'] + nome

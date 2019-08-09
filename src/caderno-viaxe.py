@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------------------------
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
 #+ Editado:	05/08/2019 00:01:03
@@ -14,12 +15,22 @@ import gettext
 from pathlib import Path
 from unidecode import unidecode
 import os
+import shutil
 #------------------------------------------------------------------------------------------------
 # función principal que engade un contido co seu código ao ficheiro e índice
 def engadir(nome = None):
 	existe = False
 	media = {'nome': None,
-			'tipo': None}
+			'tipo': None,
+			'nota': None,
+			'autor': None,
+			'editorial': None,
+			'data_saida': None,
+			'lonxitude': None,
+			'xenero': None,
+			'idioma': None,
+			'data_ini': None,
+			'data_fin': None}
 
 	print('\n-----------------------')
 	print(_('*> Engadindo:'))
@@ -72,10 +83,80 @@ def engadir(nome = None):
 			else:
 				media['tipo'] = 'imposible'
 
-		# engadimos o contido audiovisual á colección xeral
-		#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
-		# en lugar de poñer un simple número usaremos o tempo no que foi creado en base32
-		__indice[b36.code(kh.getAgora())] = media
+	# nota
+	while True:
+		nota = input(_(' > Nota (0-100): '))
+		if nota.isdigit() and int(nota) >= 0 and int(nota) <= 100:
+			media['nota'] = nota
+			break
+
+	# autor
+	media['autor'] = input(_(' > Autor ou creador: '))
+
+	# editorial
+	if tipo == __codes['libro']:
+		media['editorial'] = input(_(' > Editorial: '))
+	else:
+		media['editorial'] = 'NA'
+
+
+	# dato de saida
+	media['data_saida'] = input(_(' > Data de saída: '))
+
+	# lonxitude
+	while True:
+		valor = input(_(' > Duración (só o número): '))
+		if valor.replace(',','').replace('.','').isdigit():
+			if media['tipo'] in (__codes['artigo'], __codes['libro']):
+				media['lonxitude'] = valor + ' páxinas'
+			else:
+				media['lonxitude'] = valor + ' minutos'
+			break
+
+	# xenero
+	if media['tipo'] in (__codes['musica']):
+		xenero_base = 'musica'
+	elif media['tipo'] in (__codes['libro'], __codes['artigo']):
+		xenero_base = 'literatura'
+	else:
+		xenero_base = 'audiovisual'
+
+	while True:
+		xenero = unidecode(input(_(' > Xénero: ')))
+		if xenero == '?':
+			u.pJson(__codsXeneros[xenero_base])
+
+		elif xenero in __codsXeneros[xenero_base]:
+			media['xenero'] = xenero
+			break
+
+	# idioma
+	while True:
+		idioma = input(_(' > Idioma: '))
+		if idioma == '?':
+			u.pJson([ele for ele in __codsIdiomas.keys()])
+		elif idioma in __codsIdiomas:
+			media['idioma'] = idioma
+			break
+
+	# data de inicio
+	dini = input(_(' > Poñer data inicio? (s/n): '))
+	if u.snValido(dini) == (True, True):
+		media['data_ini'] = kh.getAgora()
+	else:
+		media['data_ini'] = None
+
+	# data de fin
+	dfin = input(_(' > Poñer data finalización? (s/n): '))
+	if u.snValido(dfin) == (True, True):
+		media['data_fin'] = kh.getAgora()
+	else:
+		media['data_fin'] = None
+
+	# engadimos o contido audiovisual á colección xeral
+	#FALTA: Mirar que a chave que se lle pon non exista xa se se eliminou
+	# en lugar de poñer un simple número usaremos o tempo no que foi creado en base32
+	__indice[b36.code(kh.getAgora())] = media
 
 	print('-----------------------')
 
@@ -87,11 +168,8 @@ def valoracion(tipo, xenero_base):
 	datos = {'resumo': None,
 			'opinions': None,
 			'nota': None,
-			'autor': None,
-			'editorial': None,
 			'data_saida': None,
 			'lonxitude': None,
-			'xenero': None,
 			'idioma': None,
 			'data_ini': None,
 			'data_fin': None,
@@ -110,16 +188,6 @@ def valoracion(tipo, xenero_base):
 			datos['nota'] = nota
 			break
 
-	# autor
-	datos['autor'] = input(_('\nAutor ou creador: '))
-
-	# editorial
-	if tipo == __codes['libro']:
-		datos['editorial'] = input(_('\nEditorial: '))
-	else:
-		datos['editorial'] = 'NA'
-
-
 	# dato de saida
 	datos['data_saida'] = input(_('\nData de saída: '))
 
@@ -131,15 +199,6 @@ def valoracion(tipo, xenero_base):
 				datos['lonxitude'] = valor + ' páxinas'
 			else:
 				datos['lonxitude'] = valor + ' minutos'
-			break
-
-	# xenero
-	while True:
-		xenero = unidecode(input(_('\nXénero: ')))
-		if xenero == '?':
-			u.pJson(__codsXeneros[xenero_base])
-		elif xenero in __codsXeneros[xenero_base]:
-			datos['xenero'] = xenero
 			break
 
 	# idioma
@@ -350,15 +409,6 @@ def edicion_aux(contido, xenero_base):
 						else:
 							contido[ele] = meter + ' páxinas'
 						break
-				elif ele == 'xenero':
-					meter = input(ele+': ')
-					# quitamoslle os posibles acentos
-					meter = unidecode(meter)
-					if meter == '?':
-						u.pJson(__codsXeneros[xenero_base])
-					elif meter in __codsXeneros[xenero_base]:
-						contido['xenero'] = meter
-						break
 				elif ele == 'idioma':
 					meter = input(ele+': ')
 					if meter == '?':
@@ -450,15 +500,110 @@ def editar_aux(nome, tipo):
 	else:
 		print(_('Imposible'))
 #------------------------------------------------------------------------------------------------
+def editar_indice(key, entrada_caderno):
+	print('-----------------------')
+	nome_vello = entrada_caderno['nome']
+
+	for ele in entrada_caderno:
+		print(' > '+ele,': ', entrada_caderno[ele])
+		if u.snValido(input(_(' > Cambiar? (s/n): '))) == (True, True):
+			while True:
+				if ele == 'tipo':
+					tipo_vello = entrada_caderno[ele]
+					while True:
+						meter = input(' > '+ele+' (serie(s), peli(p), docu(d), video(v), libro(l), música(m), artigo(a)): ')
+						if meter in __codes.values():
+							entrada_caderno[ele] = meter
+							break
+
+					# se lle cambiamos o tipo debemos cambiar a carpeta de lugar tamén
+					if tipo_vello != meter:
+						# devolve o nome que recibe a carpeta
+						carpeta_nova = [ele for ele in __codes if __codes[ele] == meter][0]
+						carpeta_vella = [ele for ele in __codes if __codes[ele] == tipo_vello][0]
+						# miramos se cambiou o nome para remoalo adecuadamente
+						if nome_vello == entrada_caderno['nome']:
+							fich__ = __carpetas[carpeta_vella]+nome_vello
+							# primeiro miramos se hai xiquera algo que mover
+							if u.existe_fich(fich__+'.json'):
+								shutil.move(fich__+'.json', __carpetas[carpeta_nova])
+							elif u.existe_carp(fich__):
+								shutil.move(fich__, __carpetas[carpeta_nova])
+						else:
+							fich__ = __carpetas[carpeta_vella]+nome_vello
+							# primeiro miramos se hai xiquera algo que mover
+							if u.existe_fich(fich__+'.json'):
+								shutil.move(fich__+'.json', __carpetas[carpeta_nova]+entrada_caderno['nome']+'.json')
+							elif u.existe_carp(fich__):
+								shutil.move(fich__, __carpetas[carpeta_nova]+entrada_caderno['nome'])
+						break
+				elif ele == 'nota':
+					meter = input(' > '+ele+': ')
+					if meter.isdigit() and int(meter) >= 0 and int(meter) <= 100:
+						entrada_caderno[ele] = meter
+						break
+				elif ele == 'lonxitude':
+					meter = input(' > '+ele+': ')
+					if meter.replace(',','').replace('.','').isdigit():
+						if entrada_caderno[ele].endswith('minutos'):
+							entrada_caderno[ele] = meter + ' minutos'
+						else:
+							entrada_caderno[ele] = meter + ' páxinas'
+						break
+				elif ele == 'xenero':
+					meter = input(' > '+ele+': ')
+					# quitamoslle os posibles acentos
+					meter = unidecode(meter)
+					if meter == '?':
+						u.pJson(__codsXeneros[xenero_base])
+					elif meter in __codsXeneros[xenero_base]:
+						entrada_caderno['xenero'] = meter
+						break
+				elif ele == 'idioma':
+					meter = input(' > '+ele+': ')
+					if meter == '?':
+						u.pJson([ele for ele in __codsIdiomas.keys()])
+					elif meter in __codsIdiomas:
+						entrada_caderno['idioma'] = meter
+						break
+				elif ele == 'data_ini':
+					meter = kh.getAgora()
+					input(' > '+ele+': '+meter)
+					entrada_caderno['data_ini'] = meter
+					break
+
+				elif ele == 'data_fin':
+					meter = kh.getAgora()
+					input(' > '+ele+': '+meter)
+					entrada_caderno['data_fin'] = meter
+					break
+
+				else:
+					meter = input(' > '+ele+': ')
+					entrada_caderno[ele] = meter
+					break
+		print('-----------------------')
+
+	__indice[key] = entrada_caderno
+
+#------------------------------------------------------------------------------------------------
 # función que mostra un contido para editalo
 def editar():
 	print('\n-----------------------')
 	nome = unidecode(input(_(' > Título do contido: ')).lower())
-	for ele in __indice.values():
+	while True:
+		op__ = input(_(' > Editar o caderno(c) ou unha opinión(o): '))
+		if op__ in ('c', 'o'):
+			break
+
+	for key, ele in __indice.items():
 		# se está no índice
 		if unidecode(ele['nome']) == unidecode(nome):
 			# pasamos o proceso á función auxiliar
-			editar_aux(ele['nome'], ele['tipo'])
+			if op__ == 'o':
+				editar_aux(ele['nome'], ele['tipo'])
+			elif op__ == 'c':
+				editar_indice(key, ele)
 			print('-----------------------')
 			break
 	print('\n-----------------------')
@@ -470,16 +615,20 @@ def iniciar():
 	# carga e devolve o ficheiro de índice
 	return u.cargar_json(__findice), u.cargar_json(__fcodsIdiomas), u.cargar_json(__fcodsXeneros)
 #------------------------------------------------------------------------------------------------
-# función que se encarga de facer todo o pertinente para pechar o programa gardandoo
-def pechar():
+def gardar():
 	print('\n-----------------------')
 	print(_('*> Gardando...'))
 	u.gardar_json(__findice, __indice)
 	#isto para cando se poda modificar dende o programa
 	u.gardar_json(__fcodsIdiomas, __codsIdiomas)
 	u.gardar_json(__fcodsXeneros, __codsXeneros)
-	print(_('*> Talogo'))
+	print(_('*> Gardado'))
 	print('-----------------------')
+#------------------------------------------------------------------------------------------------
+# función que se encarga de facer todo o pertinente para pechar o programa gardandoo
+def pechar():
+	gardar()
+	print(_('*> Talogo'))
 	exit()
 #------------------------------------------------------------------------------------------------
 def menu():
@@ -493,6 +642,7 @@ def menu():
 		print(_('3 - Mostrar contidos'))
 		print(_('4 - Buscar por titulo'))
 		print(_('5 - Editar contido'))
+		print(_('6 - Gardar'))
 
 		op = input(_('Opción: '))
 		print('-----------------------')
@@ -547,7 +697,7 @@ if __name__=="__main__":
 				}
 
 	# ficheiro co índice de tódas as críticas
-	__findice = __cbase + 'indice.json'
+	__findice = __cbase + 'caderno.json'
 
 	## Asignacións ----------------------
 	# se non existe creamos o sistema de carpetas completo
@@ -562,7 +712,8 @@ if __name__=="__main__":
 			'2': valorar,
 			'3': mostrar,
 			'4': buscar,
-			'5': editar
+			'5': editar,
+			'6': gardar
 			}
 
 	while True:

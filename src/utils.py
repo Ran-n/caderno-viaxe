@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------------------------
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 21:37:29
-#+ Editado:	08/08/2019 23:43:30
+#+ Editado:	09/08/2019 11:02:18
 ## caderno-viaxe.py
 #------------------------------------------------------------------------------------------------
 import json
@@ -21,6 +22,9 @@ nom_base=opinions
 
 #nome da carpeta onde se gardan as anotacións
 nom_anotacions=anotacions
+
+#nome do ficheiro de índice onde se gardan todas as entradas do caderno
+nom_indice=caderno.json
 '''
 #------------------------------------------------------------------------------------------------
 # función encargada de cargar ficheiros tipo json coa extensión dada se se dá
@@ -54,6 +58,7 @@ def epi_valido(epi):
 
 	return False
 #------------------------------------------------------------------------------------------------
+# función que serve para mostrar ao usuario un nome amigable dada o código de media
 def trad_codes(code, codes):
 	if code == codes['serie']:
 		return 'serie'
@@ -76,9 +81,11 @@ def trad_codes(code, codes):
 	if code == codes['libro']:
 		return 'libro'
 #------------------------------------------------------------------------------------------------
+# función que se encarga de determinar se o ficheiro dado existe
 def existe_fich(fich):
 	return Path(fich).is_file()
 #------------------------------------------------------------------------------------------------
+# función que se encarga de determinar se a carpeta dada existe
 def existe_carp(carp):
 	return Path(carp).is_dir()
 #------------------------------------------------------------------------------------------------

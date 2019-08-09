@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------------------------
 #+ Autor:	Ran#
 #+ Creado:	25/06/2019 14:27:50
-#+ Editado:	05/08/2019 00:01:03
+#+ Editado:	09/08/2019 11:02:13
 #------------------------------------------------------------------------------------------------
 import utils as u
 from khronos import khronos as kh
@@ -661,9 +661,13 @@ if __name__=="__main__":
 	#_ = en.gettext
 
 	# valores que mete o ficheiro de configuración
-	'''	__config garda:
+	'''
 	ruta
-	lang'''
+	lang
+	nom_base
+	nom_anotacions
+	nom_indice
+	'''
 	__config = u.read_config()
 
 	# diccionario con códigos para cada tipo de elemento
@@ -697,7 +701,7 @@ if __name__=="__main__":
 				}
 
 	# ficheiro co índice de tódas as críticas
-	__findice = __cbase + 'caderno.json'
+	__findice = __cbase + __config['nom_indice']
 
 	## Asignacións ----------------------
 	# se non existe creamos o sistema de carpetas completo
